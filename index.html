@@ -3,40 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QuickLearn | Simple Coding Basics</title>
+    <title>QuickLearn | Subject Master</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <header>
         <h1>QuickLearn</h1>
-        <p>Master the basics in minutes.</p>
-        <div id="score-board">
-    <p>Current Score: <span id="score-value">0</span></p>
-    <button onclick="resetScore()" style="background:#95a5a6; font-size: 0.8rem;">Reset Progress</button>
-</div>
+        <p>Master coding one category at a time.</p>
     </header>
-    <main class="container">
-    <div id="quiz-container">
-        <h2 id="lesson-title">Loading Lesson...</h2>
-        <p id="lesson-text"></p>
-<div id="timer-container" style="text-align: right; font-weight: bold; color: #e67e22;">
-    Time Remaining: <span id="time-left">10</span>s
-</div>
-        <div id="quiz-area">
-            <h3>Quick Check</h3>
-            <p id="question-text"></p>
-            <input type="text" id="answer-input" placeholder="Type answer...">
-            <button onclick="checkAnswer()">Submit</button>
-            <p id="feedback"></p>
-            <button id="next-btn" onclick="nextQuestion()" style="display:none; background:#27ae60;">Next Question →</button>
-        </div>
-    </div>
 
-    <div id="score-board">
-        <p>Score: <span id="score-value">0</span></p>
-        <button onclick="resetScore()">Reset</button>
-    </div>
-</main>
+    <main class="container">
+        <div id="menu-container">
+            <h2>Choose a Subject</h2>
+            <div class="category-grid">
+                <button class="cat-btn" onclick="startQuiz('html')">HTML Basics</button>
+                <button class="cat-btn" onclick="startQuiz('css')">CSS Styling</button>
+                <button class="cat-btn" onclick="startQuiz('js')">JS Logic</button>
+            </div>
+        </div>
+
+        <div id="quiz-container" style="display:none;">
+            <button class="back-link" onclick="showMenu()">← Back to Menu</button>
+            
+            <div id="lesson-section">
+                <h2 id="lesson-title"></h2>
+                <p id="lesson-text"></p>
+            </div>
+
+            <div id="quiz-area">
+                <div id="timer-container">Time Remaining: <span id="time-left">10</span>s</div>
+                <h3>Quick Check</h3>
+                <p id="question-text"></p>
+                <input type="text" id="answer-input" placeholder="Type your answer...">
+                <button id="submit-btn" onclick="checkAnswer()">Submit</button>
+                <p id="feedback"></p>
+                <button id="next-btn" onclick="nextQuestion()" style="display:none;">Next Question →</button>
+            </div>
+        </div>
+
+        <div id="score-board">
+            <p>Total Experience: <span id="score-value">0</span> XP</p>
+            <button id="reset-btn" onclick="resetScore()">Reset Progress</button>
+        </div>
+    </main>
+
     <script src="script.js"></script>
 </body>
+</html>
