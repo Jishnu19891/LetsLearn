@@ -63,3 +63,16 @@ button:hover {
     font-size: 1.2rem;
     color: #27ae60;
 }
+
+#next-btn {
+    margin-top: 15px;
+    width: 100%;
+    font-weight: bold;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+    100% { transform: scale(1); }
+}
