@@ -1,67 +1,42 @@
-const questions = [
-    {
-        title: "HTML Tags",
-        lesson: "HTML uses tags like <h1> for headings.",
-        question: "What tag is used for the largest heading?",
-        answer: "h1"
-    },
-    {
-        title: "Links",
-        lesson: "The <a> tag (anchor) is used to create hyperlinks.",
-        question: "Which tag is used for links?",
-        answer: "a"
-    },
-    {
-        title: "Images",
-        lesson: "The <img> tag is unique because it doesn't need a closing tag.",
-        question: "Which tag displays an image?",
-        answer: "img"
-    }
-];
+let timeLeft = 10; // Seconds per question
+let timerInterval;
 
-let currentQuestionIndex = 0;
-let score = localStorage.getItem("userScore") ? parseInt(localStorage.getItem("userScore")) : 0;
+function startTimer() {
+    timeLeft = 10; // Reset time for new question
+    document.getElementById("time-left").textContent = timeLeft;
+    
+    // Clear any existing timer before starting a new one
+    clearInterval(timerInterval);
 
-// Initialize the first question
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        document.getElementById("time-left").textContent = timeLeft;
+
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            handleTimeOut();
+        }
+    }, 1000);
+}
+
+function handleTimeOut() {
+    document.getElementById("feedback").textContent = "Time's up! No points this round.";
+    document.getElementById("feedback").style.color = "#e67e22";
+    document.getElementById("next-btn").style.display = "inline-block";
+    // Disable the input so they can't answer after time is up
+    document.getElementById("answer-input").disabled = true;
+}
+
+// Update your loadQuestion function to include:
 function loadQuestion() {
-    const q = questions[currentQuestionIndex];
-    document.getElementById("lesson-title").textContent = q.title;
-    document.getElementById("lesson-text").textContent = q.lesson;
-    document.getElementById("question-text").textContent = q.question;
-    document.getElementById("answer-input").value = ""; // Clear input
-    document.getElementById("feedback").textContent = "";
-    document.getElementById("next-btn").style.display = "none"; 
+    // ... (previous logic)
+    document.getElementById("answer-input").disabled = false;
+    startTimer();
 }
 
+// Update your checkAnswer function to stop the timer:
 function checkAnswer() {
-    const userAnswer = document.getElementById("answer-input").value.trim().toLowerCase();
-    const q = questions[currentQuestionIndex];
-
-    if (userAnswer === q.answer) {
-        document.getElementById("feedback").textContent = "Correct! Well done.";
-        document.getElementById("feedback").style.color = "#2ecc71";
-        
-        score += 10;
-        document.getElementById("score-value").textContent = score;
-        localStorage.setItem("userScore", score);
-        
-        // Show the "Next" button
-        document.getElementById("next-btn").style.display = "inline-block";
-    } else {
-        document.getElementById("feedback").textContent = "Try again!";
-        document.getElementById("feedback").style.color = "#e74c3c";
-    }
+    // ... (inside your 'if correct' logic)
+    clearInterval(timerInterval); 
+    // ...
 }
-
-function nextQuestion() {
-    currentQuestionIndex++;
-    if (currentQuestionIndex < questions.length) {
-        loadQuestion();
-    } else {
-        document.getElementById("quiz-container").innerHTML = "<h2>🎉 Course Complete!</h2><p>You've mastered the basics.</p>";
-    }
-}
-
-// Start the app
-loadQuestion();
-document.getElementById("score-value").textContent = score;
