@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuickLearn | Simple Coding Basics</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <h1>QuickLearn</h1>
+        <p>Master the basics in minutes.</p>
+        <div id="score-board">
+    <p>Current Score: <span id="score-value">0</span></p>
+    <button onclick="resetScore()" style="background:#95a5a6; font-size: 0.8rem;">Reset Progress</button>
+</div>
+    </header>
+
+    <main class="container">
+        <section id="lesson-area">
+            <h2>Today's Lesson: HTML Tags</h2>
+            <p>HTML uses <strong>tags</strong> to structure content. For example, <code>&lt;h1&gt;</code> is for headings and <code>&lt;p&gt;</code> is for paragraphs.</p>
+        </section>
+
+        <section id="quiz-area">
+            <h3>Quick Check</h3>
+            <p id="question">What tag is used for the largest heading?</p>
+            <input type="text" id="answer-input" placeholder="Type your answer here...">
+            <button onclick="checkAnswer()">Submit Answer</button>
+            <p id="feedback"></p>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
