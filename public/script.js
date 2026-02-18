@@ -1,29 +1,32 @@
-// 1. Data Structure
-const allQuestions = {
-    html: [
-        { title: "HTML Headings", lesson: "<h1> is the main title tag.", question: "What tag is for the largest heading?", answer: "h1" },
-        { title: "HTML Links", lesson: "<a> tags link to other pages.", question: "Which tag creates a hyperlink?", answer: "a" }
-    ],
-    css: [
-        { title: "Text Color", lesson: "The 'color' property affects text.", question: "Property to change text color?", answer: "color" },
-        { title: "Box Model", lesson: "'padding' is space inside a box.", question: "What property adds internal space?", answer: "padding" }
-    ],
-    js: [
-        { title: "Variables", lesson: "'let' allows values to change.", question: "Keyword to declare a variable?", answer: "let" },
-        { title: "Functions", lesson: "Functions perform tasks.", question: "Keyword to start a function?", answer: "function" }
-    ]
-};
-
-// 2. Global State
+// Global State
 let currentCategory = [];
 let currentQuestionIndex = 0;
-let score = localStorage.getItem("userScore") ? parseInt(localStorage.getItem("userScore")) : 0;
+let score = 0;
 let timeLeft = 10;
 let timerInterval;
 
-// 3. Navigation Functions
-function startQuiz(category) {
-    currentCategory = allQuestions[category];
+// On page load: fetch score from server
+async function initScore() {
+    try {
+        const res = await fetch('/api/score');
+        const data = await res.json();
+        score = data.xp;
+        document.getElementById("score-value").textContent = score;
+    } catch (err) {
+        console.error('Could not load score:', err);
+    }
+}
+
+// Navigation
+async function startQuiz(category) {
+    try {
+        const res = await fetch(`/api/questions/${category}`);
+        currentCategory = await res.json();
+    } catch (err) {
+        console.error('Could not load questions:', err);
+        return;
+    }
+
     currentQuestionIndex = 0;
     document.getElementById("menu-container").style.display = "none";
     document.getElementById("quiz-container").style.display = "block";
@@ -36,20 +39,20 @@ function showMenu() {
     document.getElementById("quiz-container").style.display = "none";
 }
 
-// 4. Core Logic
+// Core Logic
 function loadQuestion() {
     const q = currentCategory[currentQuestionIndex];
-    
+
     document.getElementById("lesson-title").textContent = q.title;
     document.getElementById("lesson-text").textContent = q.lesson;
     document.getElementById("question-text").textContent = q.question;
-    
+
     document.getElementById("answer-input").value = "";
     document.getElementById("answer-input").disabled = false;
     document.getElementById("feedback").textContent = "";
     document.getElementById("next-btn").style.display = "none";
     document.getElementById("timer-container").classList.remove("timer-low");
-    
+
     startTimer();
 }
 
@@ -78,19 +81,24 @@ function handleTimeOut() {
     document.getElementById("next-btn").style.display = "block";
 }
 
-function checkAnswer() {
+async function checkAnswer() {
     const userAnswer = document.getElementById("answer-input").value.trim().toLowerCase();
     const q = currentCategory[currentQuestionIndex];
 
     if (userAnswer === q.answer) {
         clearInterval(timerInterval);
+
+        try {
+            const res = await fetch('/api/score/add', { method: 'POST' });
+            const data = await res.json();
+            score = data.xp;
+            document.getElementById("score-value").textContent = score;
+        } catch (err) {
+            console.error('Could not save score:', err);
+        }
+
         document.getElementById("feedback").textContent = "Correct! +10 XP";
         document.getElementById("feedback").style.color = "#2ecc71";
-        
-        score += 10;
-        document.getElementById("score-value").textContent = score;
-        localStorage.setItem("userScore", score);
-        
         document.getElementById("answer-input").disabled = true;
         document.getElementById("next-btn").style.display = "block";
     } else {
@@ -110,11 +118,16 @@ function nextQuestion() {
     }
 }
 
-function resetScore() {
-    score = 0;
-    localStorage.removeItem("userScore");
-    document.getElementById("score-value").textContent = score;
+async function resetScore() {
+    try {
+        const res = await fetch('/api/score/reset', { method: 'DELETE' });
+        const data = await res.json();
+        score = data.xp;
+        document.getElementById("score-value").textContent = score;
+    } catch (err) {
+        console.error('Could not reset score:', err);
+    }
 }
 
 // Init
-document.getElementById("score-value").textContent = score;
+initScore();
