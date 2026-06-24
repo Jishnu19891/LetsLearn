@@ -2,13 +2,13 @@ const express = require('express');
 const router = express.Router();
 const Score = require('../models/Score');
 
-// Helper: get or create the singleton score document
+// Helper: get or create the singleton score document (atomic upsert avoids race condition)
 async function getScore() {
-    let score = await Score.findOne();
-    if (!score) {
-        score = await Score.create({ xp: 0 });
-    }
-    return score;
+    return Score.findOneAndUpdate(
+        {},
+        { $setOnInsert: { xp: 0 } },
+        { upsert: true, new: true }
+    );
 }
 
 // GET /api/score
@@ -17,6 +17,7 @@ router.get('/', async (req, res) => {
         const score = await getScore();
         res.json({ xp: score.xp });
     } catch (err) {
+        console.error(err);
         res.status(500).json({ error: 'Failed to get score' });
     }
 });
@@ -29,6 +30,7 @@ router.post('/add', async (req, res) => {
         await score.save();
         res.json({ xp: score.xp });
     } catch (err) {
+        console.error(err);
         res.status(500).json({ error: 'Failed to update score' });
     }
 });
@@ -41,6 +43,7 @@ router.delete('/reset', async (req, res) => {
         await score.save();
         res.json({ xp: 0 });
     } catch (err) {
+        console.error(err);
         res.status(500).json({ error: 'Failed to reset score' });
     }
 });
